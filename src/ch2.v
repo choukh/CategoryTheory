@@ -34,7 +34,7 @@ Proof. apply id_right. Qed.
 (** 2.3 Associativity **)
 
 Variable D : obj[ℂ].
-Variable h : C ~> C.
+Variable h : C ~> D.
 
 Fact comp_assoc : h ∘ (g ∘ f) ≈ (h ∘ g) ∘ f.
 Proof. apply comp_assoc. Qed.
@@ -78,11 +78,11 @@ Section ch2_5.
 Variable ℂ : Category.
 Variable B : obj[ℂ].
 Variable j : B ~> B.
-Hypothesis j_id_left : ∀ (X : obj[ℂ]) (f : X ~> B), j ∘ f ≈ f.
+Hypothesis j_id_left : ∀ X (f : X ~> B), j ∘ f ≈ f.
 
-Fact id_unique : j ≈ @id ℂ B.
+Fact id_unique : j ≈ id[B].
 Proof.
-  pose proof (H := j_id_left B (@id ℂ B)).
+  pose proof (H := j_id_left B id[B]).
   rewrite id_right in H. apply H.
 Qed.
 
