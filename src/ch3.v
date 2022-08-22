@@ -17,6 +17,7 @@ Section ch3.
 
 (* preorder *)
 Check Proset.
+
 (* partial order *)
 Check Poset.
 
@@ -24,12 +25,13 @@ Check Poset.
 
 (* cat of structural sets *)
 Check Ens.
+
 (* cat of setoids *)
 Check Sets.
 
 (** 3.4 The Category Of Graphs **)
 
-(* I can't a definition of directed graph in the category library *)
+(* I can't find a definition of directed graph in the category library *)
 Record graph := {
   vertex : Type;
   edge := prod vertex vertex;
@@ -88,6 +90,7 @@ Definition cat_of_monoid : Category :=
 (** 3.6 Duality **)
 
 Check Opposite.
+
 (* opposite involution *)
 Check op_invol.
 
