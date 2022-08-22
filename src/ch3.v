@@ -10,7 +10,7 @@ From Category.Instance Require Import Proset Poset Ens Sets Zero One.
 From Category.Algebra Require Import Monoid.
 From Category.Construction Require Import Opposite.
 
-(** 23 Important Kinds Of Categories **)
+(** 3 Important Kinds Of Categories **)
 Section ch3.
 
 (** 3.1 Preorders **)
@@ -22,9 +22,9 @@ Check Poset.
 
 (** 3.2 The Category Of Sets **)
 
-(* cat of structural set *)
+(* cat of structural sets *)
 Check Ens.
-(* cat of setoid *)
+(* cat of setoids *)
 Check Sets.
 
 (** 3.4 The Category Of Graphs **)
