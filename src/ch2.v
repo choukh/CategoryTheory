@@ -7,6 +7,7 @@ Set Universe Polymorphism.
 Require Import Utf8_core.
 From Category Require Import Lib Theory.
 
+(** 2 Definition Of A Category **)
 Section ch2.
 
 Variable ℂ : Category.
@@ -14,12 +15,12 @@ Variable A B C : obj[ℂ].
 Variable f : A ~> B.
 Variable g : B ~> C.
 
-(* 2.1 *)
+(** 2.1 Composition **)
 
 Fact comp : A ~> C.
 Proof. apply (g ∘ f). Qed.
 
-(* 2.2 *)
+(** 2.2 Identity Arrows **)
 
 Fact id_arrow : B ~> B.
 Proof. apply id. Qed.
@@ -30,7 +31,7 @@ Proof. apply id_left. Qed.
 Fact id_right : f ∘ id ≈ f.
 Proof. apply id_right. Qed.
 
-(* 2.3 *)
+(** 2.3 Associativity **)
 
 Variable D : obj[ℂ].
 Variable h : C ~> C.
@@ -43,7 +44,7 @@ Proof. apply comp_assoc_sym. Qed.
 
 End ch2.
 
-(* 2.4 *)
+(** 2.4 Example **)
 Section ch2_4.
 
 Inductive object := A | B | C.
@@ -71,6 +72,7 @@ Defined.
 
 End ch2_4.
 
+(** 2.5 Unique Identity Arrows **)
 Section ch2_5.
 
 Variable ℂ : Category.

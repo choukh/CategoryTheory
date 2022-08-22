@@ -10,19 +10,26 @@ From Category.Instance Require Import Proset Poset Ens Sets Zero One.
 From Category.Algebra Require Import Monoid.
 From Category.Construction Require Import Opposite.
 
+(** 23 Important Kinds Of Categories **)
 Section ch3.
 
-(* 3.1 *)
+(** 3.1 Preorders **)
+
+(* preorder *)
 Check Proset.
+(* partial order *)
 Check Poset.
 
-(* 3.2 *)
+(** 3.2 The Category Of Sets **)
+
+(* cat of structural set *)
 Check Ens.
+(* cat of setoid *)
 Check Sets.
 
-(* 3.4 *)
-(* I can't a definition of directed graph in the category library *)
+(** 3.4 The Category Of Graphs **)
 
+(* I can't a definition of directed graph in the category library *)
 Record graph := {
   vertex : Type;
   edge := prod vertex vertex;
@@ -52,12 +59,12 @@ Proof.
   - reflexivity.
 Defined.
 
-(* 3.5 *)
+(** 3.5 Monoids **)
 
 (* empty cat *)
 Check _0.
 
-(* one obj cat *)
+(* one object cat *)
 Check _1.
 
 Variable A : Type.
@@ -78,8 +85,10 @@ Definition cat_of_monoid : Category :=
     comp_assoc_sym _ _ _ _ := mon_assoc;
   |}.
 
-(* 3.5 *)
+(** 3.6 Duality **)
+
 Check Opposite.
+(* opposite involution *)
 Check op_invol.
 
 End ch3.
