@@ -66,8 +66,10 @@ Defined.
 (* empty cat *)
 Check _0.
 
-(* one object cat *)
+(* one object one arrow cat *)
 Check _1.
+
+(* one object many arrows cat *)
 
 Variable A : Type.
 Hypothesis setoid_A : Setoid A.
