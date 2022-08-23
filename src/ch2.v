@@ -5,13 +5,13 @@ Set Implicit Arguments.
 Set Universe Polymorphism.
 
 Require Import Utf8_core.
-From Category Require Import Lib Theory.
+From Category Require Import Lib.Setoid Theory.
 
 (** 2 Definition Of A Category **)
 Section ch2.
 
 Variable ℂ : Category.
-Variable A B C : obj[ℂ].
+Variable A B C : ℂ.
 Variable f : A ~> B.
 Variable g : B ~> C.
 
@@ -33,7 +33,7 @@ Proof. apply id_right. Qed.
 
 (** 2.3 Associativity **)
 
-Variable D : obj[ℂ].
+Variable D : ℂ.
 Variable h : C ~> D.
 
 Fact comp_assoc : h ∘ (g ∘ f) ≈ (h ∘ g) ∘ f.
@@ -76,7 +76,7 @@ End ch2_4.
 Section ch2_5.
 
 Variable ℂ : Category.
-Variable B : obj[ℂ].
+Variable B : ℂ.
 Variable j : B ~> B.
 Hypothesis j_id_left : ∀ X (f : X ~> B), j ∘ f ≈ f.
 
