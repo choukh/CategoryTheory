@@ -7,8 +7,15 @@ From Category.Instance Require Import Cat Coq Sets.
 Local Existing Instance is_setoid.
 
 (** 4.1 **)
-Check Functor.
-Check Functor.Compose.
+Check @Functor.
+Check @Id.
+Check @Compose.
+
+Check Cat.
+Check (Cat : obj[Cat]).
+
+Fact Functor_eta : Functor = @Functor Cat Cat.
+Proof. reflexivity. Qed.
 
 (** 4.2 **)
 
@@ -45,3 +52,11 @@ Next Obligation.
   - destruct H as [c [H gc]]. exists c. split; trivial.
     rewrite <- fb. now apply f.
 Defined.
+
+(** 4.3 **)
+Check @Full.
+Check @Faithful.
+
+(** 4.4 **)
+
+
