@@ -1,11 +1,7 @@
 (*** Coq coding by choukh, Aug 2022 ***)
 
-Set Warnings "-notation-overridden".
-Set Implicit Arguments.
-Set Universe Polymorphism.
-
-Require Import Utf8_core.
-From Category Require Import Lib.Setoid Theory.
+Require Import Lib.
+From Category Require Import Theory.
 
 (** 2 Definition Of A Category **)
 Section ch2.

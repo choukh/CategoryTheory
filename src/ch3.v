@@ -1,11 +1,6 @@
 (*** Coq coding by choukh, Aug 2022 ***)
 
-Set Warnings "-notation-overridden".
-Set Implicit Arguments.
-Set Universe Polymorphism.
-
-Require Import Utf8_core.
-From Category Require Import Lib.Setoid.
+Require Import Lib.
 From Category.Instance Require Import Poset Ens Sets Zero One.
 From Category.Algebra Require Import Monoid.
 From Category.Construction Require Import Opposite.
