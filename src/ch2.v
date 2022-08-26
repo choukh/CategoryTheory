@@ -4,7 +4,7 @@ Require Import Lib.
 From Category Require Import Theory.
 
 (** 2 Definition Of A Category **)
-Section ch2.
+Section Ch2.
 
 Variable ℂ : Category.
 Variable A B C : ℂ.
@@ -38,10 +38,10 @@ Proof. apply comp_assoc. Qed.
 Fact comp_assoc_sym : (h ∘ g) ∘ f ≈ h ∘ (g ∘ f).
 Proof. apply comp_assoc_sym. Qed.
 
-End ch2.
+End Ch2.
 
 (** 2.4 Example **)
-Section ch2_4.
+Section Ch2_4.
 
 Inductive object := A | B | C.
 Inductive arrow : object → object → Type :=
@@ -53,23 +53,22 @@ Inductive arrow : object → object → Type :=
   | h : arrow A C
   | i : arrow A C.
 
-Example ℂ : Category.
-Proof.
-  unshelve eapply (Build_Category object arrow).
-  - intros. unshelve eexists. intros F G. apply True. auto.
-  - intros []; constructor.
-  - intros [] [] [] F G; try constructor; try inversion F; inversion G.
-  - auto.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
+Program Example ℂ : Category := {|
+  obj := object;
+  hom := arrow;
+  homset _ _ := {| equiv _ _ := True |}
+|}.
+Next Obligation.
+  destruct x; constructor.
+Defined.
+Next Obligation.
+  destruct x, y, z; try constructor; try inversion f0; inversion g0.
 Defined.
 
-End ch2_4.
+End Ch2_4.
 
 (** 2.5 Unique Identity Arrows **)
-Section ch2_5.
+Section Ch2_5.
 
 Variable ℂ : Category.
 Variable B : ℂ.
@@ -82,4 +81,4 @@ Proof.
   rewrite id_right in H. apply H.
 Qed.
 
-End ch2_5.
+End Ch2_5.

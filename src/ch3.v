@@ -6,26 +6,27 @@ From Category.Algebra Require Import Monoid.
 From Category.Construction Require Import Opposite.
 
 (** 3 Important Kinds Of Categories **)
-Section ch3.
+Section Ch3.
 
 (** 3.1 Preorders **)
+Import Relation_Definitions RelationClasses.
 
 (* preorder *)
-Check Proset.
+Check (@Proset : ∀ A (R : relation A), PreOrder R → Category).
 
 (* partial order *)
-Check Poset.
+Check (@Poset : ∀ C (R : relation obj[C]), PreOrder R → Asymmetric R → Category).
 
 (** 3.2 The Category Of Sets **)
 
 (* cat of structural sets *)
-Check Ens.
+Check (Ens : Category).
 
 (* cat of setoids *)
-Check Sets.
+Check (Sets : Category).
 
 (* cat of coq types *)
-Check Coq.
+Check (Coq : Category).
 
 (** 3.4 The Category Of Graphs **)
 
@@ -54,31 +55,26 @@ Fact target_morph {A B} {_ : Graph_Morph A B} {a b : A} :
   ∀ e : edge a b, αᵥ (target e) = target (αₑ e).
 Proof. trivial. Qed.
 
-Definition Gph : Category.
-Proof.
-  unshelve eapply (Build_Category Graph Graph_Morph).
-  - intros. unshelve eexists.
-    + intros F G. apply (∀ x, F x = G x).
-    + split; congruence.
-  - intros. unshelve eexists; auto.
-  - intros A B C [] []. unshelve eexists.
-    + intros a. apply (αᵥ0 (αᵥ1 a)).
-    + intros a b e. simpl. auto.
-  - intros A B C [] [] eq1 [] [] eq2 a. simpl in *.
-    rewrite eq1, eq2. reflexivity.
-  - intros A B [] a; reflexivity.
-  - intros A B [] a; reflexivity.
-  - intros A B C D [] [] []; simpl; reflexivity.
-  - intros A B C D [] [] []; simpl; reflexivity.
-Defined.
+Import Setoid Category.
+
+Program Definition Gph : Category := {|
+  obj := Graph;
+  hom := Graph_Morph;
+  homset X Y := {| equiv F G := ∀ x, F x = G x |};
+  id X := {| αᵥ x := x |};
+  compose X Y Z f g := {| αᵥ := Basics.compose f g |};
+|}.
+Next Obligation. split; congruence. Qed.
+Next Obligation. destruct f, g; simpl; auto. Qed.
+Next Obligation. proper; congruence. Qed.
 
 (** 3.5 Monoids **)
 
 (* empty cat *)
-Check _0.
+Check (_0 : Category).
 
 (* one object one arrow cat *)
-Check _1.
+Check (_1 : Category).
 
 (* one object many arrows cat *)
 
@@ -86,7 +82,7 @@ Variable A : Type.
 Hypothesis setoid_A : Setoid A.
 Hypothesis monoid_A : @Monoid A setoid_A.
 
-Definition cat_of_monoid : Category := {|
+Definition monoid : Category := {|
   obj := unit;
   hom _ _ := A;
   homset _ _ := setoid_A;
@@ -101,9 +97,9 @@ Definition cat_of_monoid : Category := {|
 
 (** 3.6 Duality **)
 
-Check Opposite.
+Check (Opposite : Category → Category).
 
 (* opposite involution *)
-Check op_invol.
+Check (@op_invol : ∀ C : Category, C^op^op = C).
 
-End ch3.
+End Ch3.
