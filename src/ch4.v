@@ -59,14 +59,38 @@ Check (@Faithful : ∀ C D : Category, C ⟶ D → Type).
 
 Check (Subcategory : Category → Type).
 Check (Subcategory.Sub : ∀ C : Category, Subcategory C → Category).
-Check (Subcategory.Full : ∀ C : Category, Subcategory C → Type).
 
 Program Definition Preₛ : Subcategory Cat := {|
   sobj C := ∃ R, @RelationClasses.PreOrder C R
-    ∧ (∀ x y, R x y ↔ x ~> y)
+    ∧ (∀ x y, R x y ↔ x ~> y) (* arrow represents R *)
     ∧ (∀ x y (f g : x ~> y), f ≈ g); (* at most one arrow *)
+  (* preorder homomorphism *)
   shom C D Rc Rd F := ∀ x y : C, ``Rc x y → ``Rd (F x) (F y);
 |}.
+
+Definition Pre : Category := Sub Cat Preₛ.
+
+Program Definition Monₛ : Subcategory Cat := {|
+  sobj C :=
+    (* single object *)
+    (∃ _ : C, ∀ x y : C, x = y) ∧
+    (* homset is a monoid *)
+    ∀ x : C, ∃ mon : @Monoid (x ~> x) (homset x x),
+      @mempty _ (homset x x) mon ≈ id[x] ∧
+      ∀ f g : x ~> x, @mappend _ (homset x x) mon f g ≈ f ∘ g;
+  shom _ _ _ _ F :=
+    (* monoid homomorphism *)
+    (∀ x, fmap[F] id[x] ≈ id[fobj x]) ∧
+    (∀ x, ∀ (f g : x ~> x), fmap[F] (f ∘ g) ≈ fmap[F] f ∘ fmap[F] g)
+|}.
+Next Obligation. split.
+  - intros a. now rewrite e.
+  - intros a F G. now rewrite e0.
+Defined.
+
+Definition Mon : Category := Sub Cat Monₛ.
+
+Check (Subcategory.Full : ∀ C : Category, Subcategory C → Type).
 
 Fact Preₛ_Full : Subcategory.Full Cat Preₛ.
 Proof.
@@ -74,29 +98,63 @@ Proof.
   intros Rxy. apply Hd, F, Hc, Rxy.
 Qed.
 
-Definition Pre : Category := Sub Cat Preₛ.
-
-Program Definition Monₛ : Subcategory Cat := {|
-  sobj C := ∃ x : C, ∀ x y : C, x = y (* single object *)
-    ∧ @Monoid (x ~> y) (homset x y); (* homset is a monoid *)
-  (* monoid homomorphism *)
-  shom C D oc od F := (∀ x, fmap[F] id[x] ≈ id[fobj x])
-    ∧ ∀ x y (f g : x ~> y), fmap[F] (f ∘ g) ≈ fmap[F] f ∘ fmap[F] g
-|}.
-Next Obligation. firstorder. Defined.
-Next Obligation. firstorder. Defined.
-Next Obligation. split.
-  - intros a. now rewrite e.
-  - intros a b F G. now rewrite e0.
-Defined.
-
 Fact Monₛ_Full : Subcategory.Full Cat Monₛ.
-Proof.
-  intros C D [] [] F. split.
-  - intros a. apply F.
-  - intros a b f g. rewrite fmap_comp. f_equiv.
-    pose proof (p a b) as [eq []]. subst. simpl.
-    
-Admitted.
+Proof. intros C D oc od F. split; intros a. apply F. apply fmap_comp. Qed.
 
-Definition Mon : Category := Sub Cat Monₛ.
+Check (Incl : ∀ (C : Category) (S : Subcategory C), Sub C S ⟶ C).
+
+Section Inclusion.
+Variable C : Category.
+Variable S : Subcategory C.
+
+Definition Incl := Incl C S.
+Check (Incl : Sub C S ⟶ C).
+
+Fact Incl_Faithful : Faithful Incl.
+Proof. now split. Qed.
+
+Lemma Incl_Full (sf: Subcategory.Full C S) : Functor.Full Incl.
+Proof.
+  unfold Subcategory.Full in sf.
+  construct. exists g. apply sf.
+  proper. all:reflexivity.
+Qed.
+
+(* This is the same lemma in lib *)
+Check (Full_Implies_Full_Functor : ∀ (C : Category) (S : Subcategory C),
+  Subcategory.Full C S → Full (Subcategory.Incl C S)).
+
+End Inclusion.
+
+Fact Pre_Incl_Full : Full (Incl Preₛ).
+Proof. apply Incl_Full, Preₛ_Full. Qed.
+
+Fact Mon_Incl_Full : Full (Incl Monₛ).
+Proof. apply Incl_Full, Monₛ_Full. Qed.
+
+(** 4.5 **)
+
+Section Slice.
+Variable A B C : Set.
+Variable f : A → bool.
+Variable g : B → bool.
+Variable h : C → bool.
+
+Let ℂ := Coq ̸ bool.
+Check (obj[ℂ] = ∃ T, T → bool).
+
+Let a : ℂ := (A; f).
+Let b : ℂ := (B; g).
+Let c : ℂ := (C; h).
+
+Check ((a ~> a) = ∃ F : A → A, ∀ x : A, f x = f (F x)).
+Check ((a ~> b) = ∃ F : A → B, ∀ x : A, f x = g (F x)).
+
+Fact id_ℂ (d : ℂ) (x : ``d) : (``id[d]) x = x.
+Proof. trivial. Qed.
+
+Variable F : a ~> b.
+Variable G : b ~> c.
+Check (``(G ∘ F) : A → C).
+
+End Slice.
