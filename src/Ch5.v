@@ -1,7 +1,8 @@
 (*** Coq coding by choukh, Aug 2022 ***)
 
 Require Import Lib.
-From Category.Construction Require Isomorphism.
+From Category.Theory Require Import Category.
+From Category.Construction Require Isomorphism Slice.
 From Category.Structure Require Terminal.
 
 (** 5.1 **)
@@ -50,4 +51,19 @@ Next Obligation.
   f_equiv. apply one_unique.
 Defined.
 
+Import Slice.
+Program Example terminal_of_slice (a : C) : @Terminal (C ̸ a) := {|
+  terminal_obj := (a; id[a]);
+|}.
+Next Obligation. rewrite id_left in X0, X. now rewrites. Defined.
+
 End Ch5_2.
+
+(** 5.3 **)
+(* functional extensionality like *)
+Fact equal_arrows {ℂ : Category} (B C : ℂ) (f g : B ~> C) :
+  (∀ A (x: A ~> B), f ∘ x ≈ g ∘ x) ↔ f ≈ g.
+Proof. split.
+  - intros H. specialize H with B id. now rewrite !id_right in H.
+  - intros eq A x. now rewrites.
+Qed.
