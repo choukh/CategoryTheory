@@ -60,10 +60,10 @@ Next Obligation. rewrite id_left in X0, X. now rewrites. Defined.
 End Ch5_2.
 
 (** 5.3 **)
-(* functional extensionality like *)
-Fact equal_arrows {ℂ : Category} (B C : ℂ) (f g : B ~> C) :
-  (∀ A (x: A ~> B), f ∘ x ≈ g ∘ x) ↔ f ≈ g.
+
+Fact arrow_extensionality {ℂ : Category} (B C : ℂ) (f g : B ~> C) :
+  f ≈ g ↔ ∀ A (x: A ~> B), f ∘ x ≈ g ∘ x.
 Proof. split.
-  - intros H. specialize H with B id. now rewrite !id_right in H.
   - intros eq A x. now rewrites.
+  - intros H. specialize H with B id. now rewrite !id_right in H.
 Qed.
