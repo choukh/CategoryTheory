@@ -84,15 +84,25 @@ End Ch5_3.
 Section Ch5_4.
 Import Morphisms Coq.
 
-Variable B C : Coq.
-Variable f : B ~> C.
-
-Fact coq_monic : Monic f ↔ ∀ x y, f x = f y → x = y.
+Fact injectivity_is_monic {B C : Coq} (f : B ~> C) :
+  (∀ x y, f x = f y → x = y) ↔ Monic f.
 Proof. split.
+  - intros inj. construct. apply inj, H.
   - intros [monic] x y eq.
     specialize monic with 1 (λ _, x) (λ _, y).
     simpl in monic. tauto.
-  - intros inj. construct. apply inj, H.
+Qed.
+
+Fact surjectivity_is_epic {B C : Coq} (f : B ~> C) :
+  (forall y, exists x, f x = y) ↔ Epic f.
+Proof. split.
+  - intros H. split. intros D g h eq.
+    intros y. destruct (H y) as [x <-]. apply eq.
+  - intros [epic] y.
+    specialize epic with Prop (λ y, (exists x, f x = y)%type) (λ _, True).
+    erewrite epic; trivial. simpl. intros x.
+    Axiom PE : ∀ P Q, (P <-> Q -> P = Q).
+    apply PE. firstorder eauto.
 Qed.
 
 End Ch5_4.
