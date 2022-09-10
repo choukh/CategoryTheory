@@ -102,11 +102,11 @@ Hypothesis PE : ∀ P Q, (P <-> Q -> P = Q).
 
 Fact coq_sur_iff_epic : (forall y, exists x, f x = y) ↔ Epic f.
 Proof. split.
-  - intros H. split. intros D g h eq.
-    intros y. destruct (H y) as [x <-]. apply eq.
+  - intros H. split. intros D g h eq y.
+    destruct (H y) as [x <-]. apply eq.
   - intros [epic] y.
     specialize epic with Prop (λ y, (exists x, f x = y)%type) (λ _, True).
-    erewrite epic; trivial. simpl. intros x.
+    simpl in epic. erewrite epic. trivial. intros x.
     apply PE. firstorder eauto.
 Qed.
 
@@ -119,17 +119,17 @@ Import Morphisms.
 Context {ℂ : Category} {B C : ℂ}.
 Variable f : B ~> C.
 
-Fact splitMono_monic : SplitMono f → Monic f.
-Proof.
-  intros [s Hs]. constructor. intros A g1 g2 eq.
-  rewrite <- (id_left g1), <- (id_left g2), <- Hs, !comp_assoc_sym.
-  now rewrite eq.
-Qed.
-
 Fact splitEpi_epic : SplitEpi f → Epic f.
 Proof.
   intros [s Hs]. constructor. intros A g1 g2 eq.
   rewrite <- (id_right g1), <- (id_right g2), <- Hs, !comp_assoc.
+  now rewrite eq.
+Qed.
+
+Fact splitMono_monic : SplitMono f → Monic f.
+Proof.
+  intros [r Hr]. constructor. intros A g1 g2 eq.
+  rewrite <- (id_left g1), <- (id_left g2), <- Hr, !comp_assoc_sym.
   now rewrite eq.
 Qed.
 
@@ -168,10 +168,10 @@ Proof.
   rewrite comp_assoc_sym, iso_from_to. cat.
 Qed.
 
-Fact iso_epic (iso : B ≅ C) : Epic iso.
+Corollary iso_epic (iso : B ≅ C) : Epic iso.
 Proof. apply splitEpi_epic, iso_splitEpi. Qed.
 
-Fact iso_monic (iso : B ≅ C) : Monic iso.
+Corollary iso_monic (iso : B ≅ C) : Monic iso.
 Proof. apply splitMono_monic, iso_splitMono. Qed.
 
 Variable f : B ~> C.
