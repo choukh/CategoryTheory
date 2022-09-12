@@ -1,19 +1,18 @@
 (*** Coq coding by choukh, Aug 2022 ***)
 
-Require Import Lib.
+Require Ch3 Lib.
 From Category.Theory Require Morphisms.
 From Category.Construction Require Isomorphism Slice.
 From Category.Instance Require Coq.
 From Category.Structure Require Terminal.
+Import Lib.
 
 (** 5.1 **)
 Section Ch5_1.
 Import Isomorphism.
+Context {ℂ : Category} {A B : ℂ}.
 
-Variable ℂ : Category.
-Variable A B : ℂ.
 Variable f : A ≅ B.
-
 Variable j : B ~> A.
 Hypothesis j_from : j ∘ f ≈ id.
 
@@ -28,11 +27,11 @@ End Ch5_1.
 (** 5.2 **)
 Section Ch5_2.
 Import Isomorphism Terminal.
+Context {ℂ : Category}.
 
-Variable C : Category.
-Variable T T' : @Terminal C.
-Local Definition t := @terminal_obj C T.
-Local Definition t' := @terminal_obj C T'.
+Variable T T' : @Terminal ℂ.
+Local Definition t := @terminal_obj ℂ T.
+Local Definition t' := @terminal_obj ℂ T'.
 
 Fact terminal_unique : t ≅ t'.
 Proof.
@@ -41,7 +40,7 @@ Proof.
   rewrite one_unique. reflexivity.
 Qed.
 
-Program Definition another_terminal (a : C) (iso : a ≅ 1) := {|
+Program Definition another_terminal (a : ℂ) (iso : a ≅ 1) := {|
   terminal_obj := a;
   one x := iso⁻¹ ∘ one[x]
 |}.
@@ -51,12 +50,6 @@ Next Obligation.
   rewrite <- iso_from_to, !comp_assoc_sym.
   f_equiv. apply one_unique.
 Defined.
-
-Import Slice.
-Program Example terminal_of_slice (a : C) : @Terminal (C ̸ a) := {|
-  terminal_obj := (a; id[a]);
-|}.
-Next Obligation. rewrite id_left in X0, X. now rewrites. Defined.
 
 End Ch5_2.
 
@@ -83,9 +76,7 @@ End Ch5_3.
 (** 5.4 **)
 Section Ch5_4.
 Import Morphisms Coq.
-
-Context {B C : Coq}.
-Variable f : B ~> C.
+Context {B C : Coq} {f : B ~> C}.
 
 Fact coq_inj_iff_monic : (∀ x y, f x = f y → x = y) ↔ Monic f.
 Proof. split.
@@ -115,9 +106,7 @@ End Ch5_4.
 (** 5.6 **)
 Section Ch5_6.
 Import Morphisms.
-
-Context {ℂ : Category} {B C : ℂ}.
-Variable f : B ~> C.
+Context {ℂ : Category} {B C : ℂ} {f : B ~> C}.
 
 Fact splitEpi_epic : SplitEpi f → Epic f.
 Proof.
@@ -153,7 +142,6 @@ End Ch5_6.
 
 Section Ch5_6_2.
 Import Morphisms Isomorphism.
-
 Context {ℂ : Category} {B C : ℂ}.
 
 Fact iso_splitEpi (iso : B ≅ C) : SplitEpi iso.
@@ -201,3 +189,37 @@ Defined.
 Next Obligation. apply m. Defined.
 
 End Ch5_6_2.
+
+Section Ch5_7.
+Import Morphisms Terminal.
+Context {ℂ : Category} `{@Terminal ℂ} {B : ℂ}.
+
+Fact monic_point (p : 1 ~> B) : Monic p.
+Proof. construct. apply one_unique. Qed.
+
+End Ch5_7.
+
+Section Ch5_8.
+Import Ch3 Terminal.
+
+Program Instance terminal_of_Gph : @Terminal Gph := {|
+  terminal_obj := {|
+    vertex := unit;
+    edge _ _ := unit
+  |}
+|}.
+Next Obligation. construct; apply tt. Defined.
+Next Obligation. destruct f, g. simpl. now rewrite αᵥ, αᵥ0. Defined.
+
+Import Slice.
+Context {ℂ : Category}.
+
+Program Instance terminal_of_slice (X : ℂ) : @Terminal (ℂ ̸ X) := {|
+  terminal_obj := (X; id[X]);
+|}.
+Next Obligation. rewrite id_left in X0, X1. now rewrites. Defined.
+
+Fact point_in_slice (X : ℂ) (b : ℂ ̸ X) (s : 1 ~> b) : `2 b ∘ `1 s ≈ id[X].
+Proof. destruct b as [B b], s as [s bs]. simpl in *. apply bs. Qed.
+
+End Ch5_8.
