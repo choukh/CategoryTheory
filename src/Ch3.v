@@ -19,9 +19,6 @@ Check (@Poset : ∀ C (R : relation obj[C]), PreOrder R → Asymmetric R → Cat
 
 (** 3.2 The Category Of Sets **)
 
-(* cat of structural sets *)
-Check (Ens : Category).
-
 (* cat of setoids *)
 Check (Sets : Category).
 
