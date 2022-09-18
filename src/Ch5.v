@@ -205,11 +205,17 @@ Import Ch3 Terminal.
 Program Instance terminal_of_Gph : @Terminal Gph := {|
   terminal_obj := {|
     vertex := unit;
-    edge _ _ := unit
+    edge := unit
   |}
 |}.
-Next Obligation. construct; apply tt. Defined.
-Next Obligation. destruct f, g. simpl. now rewrite αᵥ, αᵥ0. Defined.
+Next Obligation.
+  construct. 1-2:apply tt. all:now cbv.
+Defined.
+Next Obligation.
+  destruct f, g. simpl in *. split; intros.
+  destruct αᵥ, αᵥ0. reflexivity.
+  destruct αₑ, αₑ0. reflexivity.
+Defined.
 
 Import Slice.
 Context {ℂ : Category}.

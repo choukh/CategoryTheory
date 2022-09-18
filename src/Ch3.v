@@ -27,43 +27,51 @@ Check (Coq : Category).
 
 (** 3.4 The Category Of Graphs **)
 
-(* Graphs are just like 'categories' without id and comp. *)
-Class Graph := {
-  vertex : Type;
-  edge : crelation vertex;
-  edge_setoid a b : Setoid (edge a b);
-  source {a b} (e : edge a b) := a;
-  target {a b} (e : edge a b) := b
+(* Directed multigraphs with loops *)
+(* kind of like 'categories' without id and comp. *)
+Record Graph := {
+  vertex :> Type;
+  edge : Type;
+  endpoint : bool → edge → vertex;
+  source := endpoint true;
+  target := endpoint false
 }.
-Coercion vertex : Graph >-> Sortclass.
-Existing Instance edge_setoid.
+Arguments source {_}.
+Arguments target {_}.
 
-Class Graph_Morph (A B : Graph) := {
-  αᵥ : A → B;
-  αₑ {a b : A} : edge a b → edge (αᵥ a) (αᵥ b);
+Record Graph_Morph (A B : Graph) := {
+  αᵥ :> A → B;
+  αₑ : edge A → edge B;
+  source_morph e : source (αₑ e) = αᵥ (source e);
+  target_morph e : target (αₑ e) = αᵥ (target e)
 }.
-Coercion αᵥ : Graph_Morph >-> Funclass.
 
-Fact source_morph {A B} {_ : Graph_Morph A B} {a b : A} :
-  ∀ e : edge a b, αᵥ (source e) = source (αₑ e).
-Proof. trivial. Qed.
-
-Fact target_morph {A B} {_ : Graph_Morph A B} {a b : A} :
-  ∀ e : edge a b, αᵥ (target e) = target (αₑ e).
-Proof. trivial. Qed.
+Global Instance Graph_Morph_Setoid {A B} : Setoid (Graph_Morph A B).
+Proof. construct.
+  - intros F G. exact ((∀ x, F x = G x) ∧ ∀ e, F.(αₑ) e = G.(αₑ) e).
+  - firstorder congruence.
+Defined.
 
 Import Setoid Category.
 
 Program Definition Gph : Category := {|
   obj := Graph;
   hom := Graph_Morph;
-  homset X Y := {| equiv F G := ∀ x, F x = G x |};
+  homset := @Graph_Morph_Setoid;
   id X := {| αᵥ x := x |};
   compose X Y Z f g := {| αᵥ := Basics.compose f g |};
 |}.
-Next Obligation. split; congruence. Qed.
-Next Obligation. destruct f, g; simpl; auto. Qed.
-Next Obligation. proper; congruence. Qed.
+Next Obligation. destruct f, g; auto. Defined.
+Next Obligation. destruct f, g; simpl; congruence. Defined.
+Next Obligation. destruct f, g; simpl; congruence. Defined.
+Next Obligation.
+  proper. congruence.
+  destruct x0, y0, x1, y1. simpl in *. congruence.
+Defined.
+Next Obligation. destruct f; auto. Defined.
+Next Obligation. destruct f; auto. Defined.
+Next Obligation. destruct f, g, h; auto. Defined.
+Next Obligation. destruct f, g, h; auto. Defined.
 
 (** 3.5 Monoids **)
 
