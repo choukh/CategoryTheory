@@ -89,7 +89,10 @@ End Ch6_1_1.
 Section Ch6_3.
 Import Ch3 Cat Coq Fun Parallel Opposite.
 
-Program Definition Gph_Iso : [Parallel^op, Coq] ≅ Gph := {|
+Notation "⇊" := Parallel.
+
+(* This construction could take 2 minutes to build *)
+Program Definition Gph_Iso : [⇊^op, Coq] ≅ Gph := {|
   to := {|
     fobj F := {|
       vertex := F ParX;
@@ -100,9 +103,9 @@ Program Definition Gph_Iso : [Parallel^op, Coq] ≅ Gph := {|
         end
     |};
     fmap _ _ f := {|
-      αᵥ a := f _ a;
-      αₑ e := f _ e;
-      source_morph := symmetry f.(naturality_sym);
+      αᵥ := f ParX;
+      αₑ := f ParY;
+      source_morph := f.(naturality);
       target_morph := f.(naturality)
     |};
     fmap_id F := (λ x, F.(fmap_id) x, λ x, F.(fmap_id) x)
@@ -134,9 +137,6 @@ Program Definition Gph_Iso : [Parallel^op, Coq] ≅ Gph := {|
     to := {| αᵥ := λ x, x; αₑ := λ x, x |};
     from := {| αᵥ := λ x, x; αₑ := λ x, x |}
   |}; _);
-  (* iso_from_to := (λ F, {|
-    to := _
-  |}; _) *)
 |}.
 (* from.fobj.fmap_respects *)
 Next Obligation. proper. now destruct e0; destruct e. Defined.
@@ -154,9 +154,9 @@ Next Obligation. proper. destruct A; trivial. Defined.
 Next Obligation. destruct A; reflexivity. Defined.
 (* from.fmap_comp *)
 Next Obligation. destruct A; destruct f, g; reflexivity. Defined.
-(* iso_to_from.functor_equiv.iso.condition *)
+(* iso_to_from.functor_setoid.iso.condition *)
 Next Obligation. destruct f; easy. Defined.
-(* iso_from_to.functor_equiv *)
+(* iso_from_to.functor_setoid *)
 Next Obligation. unshelve eexists.
   - (* iso *) intros F. construct.
     + (* to *) transform; simpl.

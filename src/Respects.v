@@ -146,7 +146,7 @@ Next Obligation. unshelve eexists.
     rewrite <- comp_assoc, <- fmap_comp.
     rewrite iso_from_to, fmap_id, id_right. reflexivity.
 Defined.
-(* iso_from_to.functor_equiv *)
+(* iso_from_to.functor_setoid *)
 Next Obligation. unshelve eexists.
   - (* iso *) intros F. construct.
     + (* to *) transform; simpl.
@@ -223,7 +223,7 @@ Next Obligation. unshelve eexists.
       rewrite <- (comp_assoc (fmap[F] (i1 A0)⁻¹)).
       rewrite iso_to_from, id_right.
       rewrite <- fmap_comp, iso_from_to, !fmap_id. reflexivity.
-  - (* functor_equiv.iso.condition *) simpl.
+  - (* functor_setoid.iso.condition *) simpl.
     destruct (iso_from_to AB) as [i1 e1];
     destruct (iso_from_to CD) as [i2 e2]; simpl in *.
     intros F G n x. rewrite !e2.
