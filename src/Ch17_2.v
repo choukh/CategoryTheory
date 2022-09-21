@@ -27,6 +27,8 @@ Program Definition CoHom {C : Category} (a : C) : C^op ⟶ Sets := {|
 |}.
 Notation "Hom(-, a )" := (CoHom a) (format "Hom(-,  a )").
 
+Print Hom.
+
 Program Definition Curried_Hom {C : Category} : C^op ⟶ [C, Sets] := {|
   fobj (a : C) := Hom(a, -) : C ⟶ Sets;
   fmap (x y : C) (f : y ~{C}~> x):= {|
@@ -52,9 +54,9 @@ Context {C : Category} (a : C) (F : C ⟶ Sets).
 
 Global Program Instance Co_Yoneda_Lemma : Copresheaves Hom(a, -) F ≅ F a := {|
   to := {|
-    morphism (η : Hom(a, -) ⟹ F) := η a id : carrier (F a);
+    morphism (η : Hom(a, -) ⟹ F) := η a id : F a;
     proper_morphism := _ (* auto *)
-  |};
+  |} : SetoidMorphism nat_Setoid (F a);
   from := {|
     morphism (s : F a) := {|
       transform (x : C) := {|
@@ -75,7 +77,7 @@ Global Program Instance Co_Yoneda_Lemma : Copresheaves Hom(a, -) F ≅ F a := {|
 
     proper_morphism (s t : F a) (eq: s ≈ t) (x : C) (f : a ~> x) :=
       (* (4) *) _ : fmap[F] f s ≈ fmap[F] f t
-  |};
+  |} : SetoidMorphism (F a) nat_Setoid;
   iso_to_from (s : F a) :=
     (* (5) *) _ : fmap[F] id s ≈ s;
 
@@ -106,17 +108,11 @@ Global Program Instance Yoneda_Lemma : Presheaves Hom(-, a) F ≅ F a := {|
     transform x := {| morphism f := fmap[F] f s : F x |};
   |}|};
 |}.
-(* (1): [transform] preserves morphism equivalences *)
 Next Obligation. proper. destruct F; simpl in *. apply fmap_respects, X. Defined.
-(* (2): The action of [transform] is natural *)
 Next Obligation. destruct F; simpl in *. symmetry. apply fmap_comp. Defined.
-(* (3): The action of [transform] is natural (symmetric) *)
 Next Obligation. destruct F; simpl in *. apply fmap_comp. Defined.
-(* (4): [from] preserves morphism equivalences *)
 Next Obligation. proper. apply proper_morphism; assumption. Defined.
-(* (5): The result of [from] respects the laws of the functor category *)
 Next Obligation. destruct F; simpl in *. apply fmap_id. Defined.
-(* (6): The result of [from] preserves morphism equivalences *)
 Next Obligation. destruct F, x; simpl in *. rewrite naturality. apply transform; cat. Defined.
 
 End Yoneda.
